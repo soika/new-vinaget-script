@@ -3,7 +3,7 @@
 class dl_depositfiles_com extends Download { 
 
 	public function CheckAcc($cookie){
-		$domain = $this->cut_str($this->getredirect("https://depositfiles.com/"), "//", "/");
+		$domain = $this->lib->cut_str($this->getredirect("https://depositfiles.com/gold/payment_history.php"), "//", "/");
 		$data = $this->lib->curl("https://{$domain}/gold/payment_history.php", "lang_current=en;{$cookie}", "");
 		if(stristr($data, 'You have Gold access until:'))  {
 			$checksubscribe = $this->lib->curl("http://{$domain}/gold/payment_subscribe_manage.php", "lang_current=en;{$cookie}", "");
@@ -20,7 +20,6 @@ class dl_depositfiles_com extends Download {
 	
     public function Leech($url) {
 		list($url, $pass) = $this->linkpassword($url);
-		$domain = $this->lib->cut_str($this->getredirect("http://depositfiles.com/"), "//", "/");
 		$tachid = explode("/", $url);  
 		if(preg_match("/\/files\/(.*)\/(.+)/i", $url, $id)) $DFid = $id[1];
 		elseif(count($tachid) == 5)  $DFid = $tachid[4];
@@ -30,7 +29,7 @@ class dl_depositfiles_com extends Download {
 		if($page['status'] !== "OK" && $page['error'] == "FileIsPasswordProtected")  $this->error("reportpass", true, false);
 		elseif($page['status'] !== "OK" && $page['error'] == "FileDoesNotExist")   $this->error("dead", true, false, 2);
 		elseif($page['status'] !== "OK" && $page['error'] == "FilePasswordIsIncorrect")   $this->error("wrongpass", true, false, 2);
-		elseif($page['status'] == "OK" && isset($page['data']['download_url'])) return trim(str_replace("depositfiles.com", $domain, $page['data']['download_url']));
+		elseif($page['status'] == "OK" && isset($page['data']['download_url'])) return str_replace("https://","http://",$page['data']['download_url']);
 		else $this->error($page['error'], true, false);
 		return false;
     }
@@ -39,7 +38,7 @@ class dl_depositfiles_com extends Download {
 
 /*
 * Open Source Project
-* Vinaget by ..::[H]::..
+* New Vinaget by LTT❤
 * Version: 3.2 Dev
 * Depositfiles.com Download Plugin  
 * Date: 21.05.2017
